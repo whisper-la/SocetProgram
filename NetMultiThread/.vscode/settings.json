@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "inet.h": "c",
+        "in.h": "c",
+        "socket.h": "c",
+        "unistd.h": "c"
+    },
+    "editor.quickSuggestions": {
+        "strings": "on",
+        "comments": "on"
+    },
+    "javascript.inlayHints.parameterNames.enabled": "all",
+    "editor.suggestSelection": "recentlyUsed"
+}
