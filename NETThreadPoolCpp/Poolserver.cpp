@@ -4,19 +4,18 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <pthread.h>
+#include "threadpool.hpp"
 #include "tcpSever.hpp"
 #include "tcpSocket.hpp"
 
 struct Socket_info
 {
     TcpSocket *tcp;
-    TcpSever *s;
     struct sockaddr_in client_addr;
 };
 
-struct Socket_info infos[128];
 
-void* thread_fun(void* arg)
+void thread_fun(void* arg)
 {
     struct Socket_info* pinfo=static_cast<struct Socket_info*>(arg);
     std::cout << "client ip:" << inet_ntoa(pinfo->client_addr.sin_addr) << ",port:" << ntohs(pinfo->client_addr.sin_port) << std::endl;
@@ -43,9 +42,11 @@ void* thread_fun(void* arg)
     }
     delete pinfo->tcp;
     pinfo->tcp=NULL;
-    delete pinfo;
-    pinfo=NULL;
-    return NULL;
+}
+
+void connect_client(void* arg)
+{
+
 }
 
 int main(int argc, char const *argv[])
@@ -59,24 +60,22 @@ int main(int argc, char const *argv[])
     }
     std::cout << "Server started, waiting for connections..." << std::endl;
 
-    while (true)
+    threadPool<Socket_info> pool(4,8); // 最小4个线程，最大8个线程
+
+    int addrlen=sizeof(struct sockaddr_in);
+    while(1)
     {
-        Socket_info *Socketinfo = new Socket_info;
-        TcpSocket* tcp=sever.acceptClient(Socketinfo->client_addr);
-        if(tcp==nullptr)
+        struct Socket_info *infos = new Socket_info;
+        infos->tcp=sever.acceptClient(infos->client_addr);
+        if(infos->tcp==nullptr)
         {
             std::cout << "acceptClient failed" << std::endl;
-            delete Socketinfo;
-            continue; // 继续接受下一个连接而不是退出程序
+            delete infos;
+            continue;
         }
         std::cout << "acceptClient success" << std::endl; 
-
-        pthread_t tid;
-        Socketinfo->tcp=tcp;
-        Socketinfo->s=&sever;
-        pthread_create(&tid,NULL,thread_fun,(void*)Socketinfo);
-        pthread_detach(tid);
+        pool.addTask(thread_fun,(void*)infos); // 向线程池中添加任务
     }
-    
+
     return 0;
 }

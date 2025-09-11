@@ -298,6 +298,7 @@ void* threadpool_manager(void* arg)
             
         }
     }
+    return NULL;
 }
 
 // 工作线程函数

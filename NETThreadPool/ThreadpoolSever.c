@@ -51,7 +51,7 @@ void thread_fun(void* arg)
 void connect_client(void* arg)
 {
     PoolInfo* infos=(PoolInfo*)arg;
-    int addrlen=sizeof(struct sockaddr_in);
+    socklen_t addrlen=sizeof(struct sockaddr_in);
     while(1)
     {
         struct client_info *pinfo=(struct client_info *)malloc(sizeof(struct client_info));
