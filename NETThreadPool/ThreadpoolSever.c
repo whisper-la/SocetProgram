@@ -98,6 +98,6 @@ int main(int argc, char const *argv[])
     info->pool=pool;
     info->fd=sockfd;
     threadpool_add_task(pool,connect_client,(void*)info); // 向线程池中添加任务
-    pthread_exit(NULL);
+    pthread_exit(NULL); // 这种退出线程的方式能够保证子线程的存活
     return 0;
 }
