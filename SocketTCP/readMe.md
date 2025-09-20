@@ -1,4 +1,4 @@
-# 网络编程
+# 网络编程TCP
 - NetMultiThread: 单线程/多线程实现网络编程  
 gcc -o multiThreadSever multiThreadSever.c 
 gcc -o client client.c 
